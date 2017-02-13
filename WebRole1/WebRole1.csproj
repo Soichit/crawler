@@ -119,6 +119,7 @@
   <ItemGroup>
     <Compile Include="Numbers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Webpage.cs" />
     <Compile Include="WebRole.cs" />
     <Compile Include="WebService1.asmx.cs">
       <DependentUpon>WebService1.asmx</DependentUpon>
