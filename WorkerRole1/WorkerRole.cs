@@ -10,8 +10,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage.Table;
 using WebRole1;
-using System.Linq;
-using HtmlAgilityPack;
+
 
 
 namespace WorkerRole1
@@ -51,39 +50,9 @@ namespace WorkerRole1
                     queue.DeleteMessage(message);
                 }
 
-                crawl("http://www.cnn.com/");
-            }
-        }
-
-        // Get website content
-        // Get all links within content and add to query
-        // Add the contents to class
-        public static void crawl(String link)
-        {
-            // web crawler
-            HtmlWeb web = new HtmlWeb();
-            HtmlDocument htmlDoc = web.Load(link);
-            Console.WriteLine("1");
-
-            // ParseErrors is an ArrayList containing any errors from the Load statement
-            //if (htmlDoc.ParseErrors != null && htmlDoc.ParseErrors.Count() > 0)
-            if (htmlDoc.DocumentNode != null)
-            {
-                HtmlAgilityPack.HtmlNode bodyNode = htmlDoc.DocumentNode.SelectSingleNode("//body");
-                if (bodyNode != null)
-                {
-                    // insert body into table
-                    Numbers n = new Numbers(1, 2, 3);
-                    TableOperation insertOperation = TableOperation.Insert(n);
-                    table.Execute(insertOperation);
-                }
-            }
-            HtmlNode[] nodes = htmlDoc.DocumentNode.SelectNodes("//a").ToArray();
-            foreach (HtmlNode item in nodes)
-            {
-                // insert into Queue
-                CloudQueueMessage url = new CloudQueueMessage("" + item);
-                queue.AddMessage(url);
+                Crawl c = new Crawl();
+                string link = "http://www.cnn.com/";
+                c.crawlPage(link);
             }
         }
 

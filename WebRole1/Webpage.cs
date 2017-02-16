@@ -12,14 +12,19 @@ namespace WebRole1
         public string url { get; set; }
         public string title { get; set; }
         public string body { get; set; }
-    }
 
-    public Webpage(string url, string title, string body) {
-        this.PartitionKey = url;
-        this.RowKey = "path";
-        this.url = url;
-        this.title = title;
-        this.body = body;
+
+        public Webpage() { }
+
+
+        public Webpage(string url, string title, string body)
+        {
+            this.PartitionKey = url;
+            this.RowKey = "path";
+            this.url = url;
+            this.title = title;
+            this.body = body;
+        }
     }
 
 }

@@ -23,51 +23,6 @@ namespace WebRole1
         private static CloudQueue queue;
         private static CloudTable table;
 
-        [WebMethod]
-        public string CalculateSumUsingWorkerRole(int a, int b, int c)
-        {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                 CloudConfigurationManager.GetSetting("StorageConnectionString"));
-            CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
-            queue = queueClient.GetQueueReference("myurls");
-            queue.CreateIfNotExists();
-
-            //add message
-            CloudQueueMessage message = new CloudQueueMessage(Numbers.encode(a, b, c));
-            queue.AddMessage(message);
-            return "done";
-        }
-
-
-        [WebMethod]
-        public List<Numbers> ReadSumFromTableStorage()
-        {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-               CloudConfigurationManager.GetSetting("StorageConnectionString"));
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-
-            table = tableClient.GetTableReference("sum");
-            TableQuery<Numbers> rangeQuery = new TableQuery<Numbers>();
-
-            List<Numbers> result = table.ExecuteQuery(rangeQuery).ToList();
-
-            return result;
-        }
-
-        [WebMethod]
-        public int ReadTest()
-        {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-               CloudConfigurationManager.GetSetting("StorageConnectionString"));
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-
-            table = tableClient.GetTableReference("sum");
-            TableOperation retrieveOperation = TableOperation.Retrieve<Numbers>("7 7 7", "dbc2d7c6-c926-4b9b-93e3-fb25d680eb3c");
-            TableResult retrievedResult = table.Execute(retrieveOperation);
-
-            return ((Numbers)retrievedResult.Result).sum;
-        }
-
 
         [WebMethod]
         public string insertQ()
