@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<serviceModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PA3" generation="1" functional="0" release="0" Id="5bcc0d8b-a4fc-4972-9234-32afecb5a08e" dslVersion="1.2.0.0" xmlns="http://schemas.microsoft.com/dsltools/RDSM">
+<serviceModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PA3" generation="1" functional="0" release="0" Id="f39023cf-b473-4f6f-8286-fc4ea7766524" dslVersion="1.2.0.0" xmlns="http://schemas.microsoft.com/dsltools/RDSM">
   <groups>
     <group name="PA3Group" generation="1" functional="0" release="0">
       <componentports>
@@ -110,9 +110,9 @@
     </group>
   </groups>
   <implements>
-    <implementation Id="cb99433b-a51a-4793-b583-244c2e9083e3" ref="Microsoft.RedDog.Contract\ServiceContract\PA3Contract@ServiceDefinition">
+    <implementation Id="f3e136ef-e9ca-4102-b960-349c3109ec7b" ref="Microsoft.RedDog.Contract\ServiceContract\PA3Contract@ServiceDefinition">
       <interfacereferences>
-        <interfaceReference Id="bc6c7db5-9135-43ae-8d54-e20d9e669ce1" ref="Microsoft.RedDog.Contract\Interface\WebRole1:Endpoint1@ServiceDefinition">
+        <interfaceReference Id="425bc183-5b29-49e1-ab2b-abdb1db09f2d" ref="Microsoft.RedDog.Contract\Interface\WebRole1:Endpoint1@ServiceDefinition">
           <inPort>
             <inPortMoniker name="/PA3/PA3Group/WebRole1:Endpoint1" />
           </inPort>

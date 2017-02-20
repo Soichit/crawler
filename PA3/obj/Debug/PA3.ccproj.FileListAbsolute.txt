@@ -276,3 +276,5 @@ C:\Users\iGuest\Documents\crawler\PA3\obj\Debug\WorkerRole1\zh-Hant\Microsoft.Da
 C:\Users\iGuest\Documents\crawler\PA3\obj\Debug\WorkerRole1\zh-Hant\Microsoft.Data.OData.resources.dll
 C:\Users\iGuest\Documents\crawler\PA3\obj\Debug\WorkerRole1\zh-Hant\Microsoft.Data.Services.Client.resources.dll
 C:\Users\iGuest\Documents\crawler\PA3\obj\Debug\WorkerRole1\zh-Hant\System.Spatial.resources.dll
+C:\Users\iGuest\Documents\crawler\PA3\obj\Debug\WorkerRole1\HtmlAgilityPack.dll
+C:\Users\iGuest\Documents\crawler\PA3\obj\Debug\WorkerRole1\HtmlAgilityPack.pdb

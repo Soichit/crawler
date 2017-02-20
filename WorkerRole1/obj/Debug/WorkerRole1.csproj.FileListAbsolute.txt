@@ -148,3 +148,6 @@ C:\Users\iGuest\Documents\crawler\WorkerRole1\bin\Debug\zh-Hant\System.Spatial.r
 C:\Users\iGuest\Documents\crawler\WorkerRole1\obj\Debug\WorkerRole1.csprojResolveAssemblyReference.cache
 C:\Users\iGuest\Documents\crawler\WorkerRole1\obj\Debug\WorkerRole1.dll
 C:\Users\iGuest\Documents\crawler\WorkerRole1\obj\Debug\WorkerRole1.pdb
+C:\Users\iGuest\Documents\crawler\WorkerRole1\bin\Debug\HtmlAgilityPack.dll
+C:\Users\iGuest\Documents\crawler\WorkerRole1\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\iGuest\Documents\crawler\WorkerRole1\bin\Debug\HtmlAgilityPack.xml

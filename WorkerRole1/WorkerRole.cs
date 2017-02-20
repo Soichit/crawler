@@ -29,30 +29,9 @@ namespace WorkerRole1
             while (true)
             {
                 Thread.Sleep(1000);
-
-                // set up queue and table
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                 CloudConfigurationManager.GetSetting("StorageConnectionString"));
-                CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
-                queue = queueClient.GetQueueReference("myurls");
-
-                CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-                table = tableClient.GetTableReference("sum");
-                //table.DeleteIfExists();  
-                table.CreateIfNotExists();
-
-
-
-                // while queue is not empty
-                CloudQueueMessage message = queue.GetMessage(TimeSpan.FromMinutes(5));
-                if (message != null)
-                {
-                    queue.DeleteMessage(message);
-                }
-
                 Crawl c = new Crawl();
                 string link = "http://www.cnn.com/";
-                c.crawlPage(link);
+                c.startCrawl(link);
             }
         }
 
