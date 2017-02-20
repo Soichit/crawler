@@ -14,7 +14,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Xml;
 using System.Linq;
-
+using System.Diagnostics;
 
 
 namespace WebRole1
@@ -35,7 +35,6 @@ namespace WebRole1
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
             table = tableClient.GetTableReference("urlTable");
-            //table.DeleteIfExists();  
             table.CreateIfNotExists();
 
             xmlList = new List<String>();
@@ -49,32 +48,36 @@ namespace WebRole1
 
         public void startCrawl(string url)
         {
-            string robotsUrl = baseUrl + "/robots.txt";
+
+            parseHTML("http://www.cnn.com/");
+
+
+            //string robotsUrl = baseUrl + "/robots.txt";
 
             //parseRobot(robotsUrl);
-            robotXmlList.Add("http://www.cnn.com/sitemaps/sitemap-index.xml");
+            //robotXmlList.Add("http://www.cnn.com/sitemaps/sitemap-index.xml");
 
-            for (int i = 0; i < robotXmlList.Count; i++)
-            {
-                parseXML(robotXmlList[i]);
-                for (int j = 0; j < xmlList.Count; j++)
-                {
+            //for (int i = 0; i < robotXmlList.Count; i++)
+            //{
+            //    parseXML(robotXmlList[i]);
+            //    for (int j = 0; j < xmlList.Count; j++)
+            //    {
 
-                    parseXML(xmlList[j]);
-                }
-            }
+            //        parseXML(xmlList[j]);
+            //    }
+            //}
 
-            //once all xmls are parsed, go through html queue and crawl page
-            CloudQueueMessage message = new CloudQueueMessage("");
-            while (message != null)
-            {
-                message = htmlQueue.GetMessage(TimeSpan.FromMinutes(1));
-                if (message != null)
-                {
-                    htmlQueue.DeleteMessage(message);
-                    parseHTML(message.AsString);
-                }
-            }
+            ////once all xmls are parsed, go through html queue and crawl page
+            //CloudQueueMessage message = new CloudQueueMessage("");
+            //while (message != null)
+            //{
+            //    message = htmlQueue.GetMessage(TimeSpan.FromMinutes(1));
+            //    if (message != null)
+            //    {
+            //        htmlQueue.DeleteMessage(message);
+            //        parseHTML(message.AsString);
+            //    }
+            //}
         }
 
 
@@ -145,12 +148,19 @@ namespace WebRole1
             //if (htmlDoc.ParseErrors != null && htmlDoc.ParseErrors.Count() > 0)
             if (htmlDoc.DocumentNode != null)
             {
-                string title = "" + htmlDoc.DocumentNode.SelectSingleNode("//head/title");
+                string title = htmlDoc.DocumentNode.SelectSingleNode("//head/title").InnerHtml;
 
-                // insert webpage into table
-                Webpage page = new Webpage(link, title);
-                TableOperation insertOperation = TableOperation.Insert(page);
-                table.Execute(insertOperation);
+                try
+                {
+                    // insert webpage into table
+                    Webpage page = new Webpage(link, title);
+                    TableOperation insertOperation = TableOperation.Insert(page);
+                    table.Execute(insertOperation);
+                }
+                catch (Microsoft.WindowsAzure.Storage.StorageException)
+                {
+                    Debug.WriteLine("StorageException error at: " + link);
+                }
             }
             HtmlNode[] nodes = htmlDoc.DocumentNode.SelectNodes("//a[@href]").ToArray();
             foreach (HtmlNode item in nodes)
@@ -171,6 +181,9 @@ namespace WebRole1
                     else if (hrefValue.Substring(0, 4) == "http")
                     {
                         correctUrl = hrefValue;
+                    } else
+                    {
+                        correctUrl = "XXX";
                     }
 
                     //insert into html queue
@@ -213,7 +226,6 @@ namespace WebRole1
             //checkSitemap(url, reader);
             //WORK ON
         }
-
 
     }
 }
