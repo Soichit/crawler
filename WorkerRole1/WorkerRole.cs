@@ -20,18 +20,55 @@ namespace WorkerRole1
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
 
-        private static CloudQueue queue;
-        private static CloudTable table;
+        //private static CloudQueue queue;
+        //private static CloudTable table;
+        private static List<string> baseUrlList;
+        //private static List<String> robotXmlList;
+        //private static CloudQueue htmlQueue;
+        //private static List<String> xmlList;
+        //private static string baseUrl;
+       
 
         public override void Run()
         {
-            //Trace.TraceInformation("WorkerRole1 is running");
+            Crawl c = new Crawl(); // move inside while loop
+            baseUrlList = new List<string>();
+            baseUrlList.Add("http://www.cnn.com/");
+            // baseUrlList.Add("http://bleacherreport.com/");
+
+            
+
             while (true)
             {
                 Thread.Sleep(1000);
-                Crawl c = new Crawl();
-                string link = "http://www.cnn.com/";
-                c.startCrawl(link);
+
+                // go through list of cnn and bleacherreport
+                while (baseUrlList.Count > 0)
+                {
+                    string baseUrl = baseUrlList[0]; //"http://www.cnn.com"
+                    baseUrlList.RemoveAt(0); //move to end to be safe
+                    string robotsUrl = baseUrl + "/robots.txt";
+
+                    c.parseRobot(robotsUrl);
+                    // parse through robots.txt and xmls
+                    for (int i = 0; i < c.robotXmlList.Count; i++)
+                    {
+                        c.parseXML(c.robotXmlList[i]);
+                        for (int j = 0; j < c.xmlList.Count; j++)
+                        {
+                            c.parseXML(c.xmlList[j]);
+                        }
+                    }
+                }
+
+                //once all xmls are parsed, go through html queue and crawl page
+                //CloudQueueMessage message = new CloudQueueMessage("");
+                CloudQueueMessage message = c.htmlQueue.GetMessage(TimeSpan.FromMinutes(1));
+                if (message != null)
+                {
+                    c.htmlQueue.DeleteMessage(message);
+                    c.parseHTML(message.AsString);
+                }
             }
         }
 

@@ -21,13 +21,14 @@ namespace WebRole1
 {
     public class Crawl
     {
-        private static CloudQueue htmlQueue;
-        private static List<String> xmlList;
-        private static List<String> robotXmlList;
-        private static CloudTable table;
-        private static string baseUrl;
-        private static DateTime cutOffDate;
-        private static HashSet<string> disallows;
+        // static variables??
+        public CloudQueue htmlQueue { get; private set; }
+        public List<String> xmlList { get; private set; }
+        public List<String> robotXmlList { get; private set; }
+        public CloudTable table { get; private set; }
+        public string baseUrl { get; private set; }
+        public DateTime cutOffDate { get; private set; }
+        public HashSet<string> disallows { get; private set; }
 
         public Crawl() {
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
@@ -43,41 +44,13 @@ namespace WebRole1
             htmlQueue.CreateIfNotExists();
             disallows = new HashSet<string>();
             cutOffDate = new DateTime(2016, 12, 1); // 12/1/2016
-            baseUrl = "http://www.cnn.com";
+            baseUrl = "http://www.cnn.com"; //FIX: don't hardcode
         }
 
         public void startCrawl(string url)
         {
-
-            parseHTML("http://www.cnn.com/");
-
-
-            //string robotsUrl = baseUrl + "/robots.txt";
-
-            //parseRobot(robotsUrl);
+            //parseHTML("http://www.cnn.com/");
             //robotXmlList.Add("http://www.cnn.com/sitemaps/sitemap-index.xml");
-
-            //for (int i = 0; i < robotXmlList.Count; i++)
-            //{
-            //    parseXML(robotXmlList[i]);
-            //    for (int j = 0; j < xmlList.Count; j++)
-            //    {
-
-            //        parseXML(xmlList[j]);
-            //    }
-            //}
-
-            ////once all xmls are parsed, go through html queue and crawl page
-            //CloudQueueMessage message = new CloudQueueMessage("");
-            //while (message != null)
-            //{
-            //    message = htmlQueue.GetMessage(TimeSpan.FromMinutes(1));
-            //    if (message != null)
-            //    {
-            //        htmlQueue.DeleteMessage(message);
-            //        parseHTML(message.AsString);
-            //    }
-            //}
         }
 
 
@@ -148,8 +121,12 @@ namespace WebRole1
             //if (htmlDoc.ParseErrors != null && htmlDoc.ParseErrors.Count() > 0)
             if (htmlDoc.DocumentNode != null)
             {
-                string title = htmlDoc.DocumentNode.SelectSingleNode("//head/title").InnerHtml;
-
+                string title = "";
+                var titleNode = htmlDoc.DocumentNode.SelectSingleNode("//head/title");
+                if (titleNode != null)
+                {
+                    title = titleNode.InnerHtml;
+                }
                 try
                 {
                     // insert webpage into table
@@ -162,8 +139,16 @@ namespace WebRole1
                     Debug.WriteLine("StorageException error at: " + link);
                 }
             }
-            HtmlNode[] nodes = htmlDoc.DocumentNode.SelectNodes("//a[@href]").ToArray();
-            foreach (HtmlNode item in nodes)
+            HtmlNode[] links;
+            var linkNodes = htmlDoc.DocumentNode.SelectNodes("//a[@href]");
+            if (linkNodes != null)
+            {
+                links = linkNodes.ToArray();
+            } else
+            {
+                links = null;
+            }
+            foreach (HtmlNode item in links)
             {
                 // insert into html queue
                 string hrefValue = item.GetAttributeValue("href", string.Empty).Trim();
@@ -185,7 +170,6 @@ namespace WebRole1
                     {
                         correctUrl = "XXX";
                     }
-
                     //insert into html queue
                     if (!disallows.Contains(correctUrl) && correctUrl.Contains("cnn.com")) // or "bleacherreport.com"
                     {
@@ -224,7 +208,6 @@ namespace WebRole1
             //string output = string.Join("\r\n", disallows.ToArray());
             //string output2 = string.Join("\r\n", xmlList.ToArray());
             //checkSitemap(url, reader);
-            //WORK ON
         }
 
     }
