@@ -20,37 +20,54 @@ namespace WebRole1
     // [System.Web.Script.Services.ScriptService]
     public class WebService1 : System.Web.Services.WebService
     {
-        private static CloudQueue htmlQueue;
-        private static CloudTable table;
+        private static CloudQueue stateQueue;
+        //private static CloudTable table;
 
-
-        [WebMethod]
-        public string insertQ()
+        public WebService1()
         {
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
                 CloudConfigurationManager.GetSetting("StorageConnectionString"));
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
-            htmlQueue = queueClient.GetQueueReference("myhtml");
-            htmlQueue.CreateIfNotExists();
+            stateQueue = queueClient.GetQueueReference("state");
+            stateQueue.CreateIfNotExists();
+        }
 
+
+        [WebMethod]
+        public string StartCrawling()
+        {
             //add message
-            CloudQueueMessage message = new CloudQueueMessage("http://www.cnn.com/index.html");
-            CloudQueueMessage message2 = new CloudQueueMessage("2");
-            CloudQueueMessage message3 = new CloudQueueMessage("3");
-            htmlQueue.AddMessage(message);
-            htmlQueue.AddMessage(message2);
-            htmlQueue.AddMessage(message3);
+            CloudQueueMessage message = new CloudQueueMessage("start");
+            stateQueue.AddMessage(message);
             return "done";
         }
 
         [WebMethod]
-        public string readQ()
+        public string StopCrawling()
         {
-            // remove message
-            CloudQueueMessage message2 = htmlQueue.GetMessage(TimeSpan.FromMinutes(5));
-            htmlQueue.DeleteMessage(message2);
-            return "" + message2.AsString;
+            //add message
+            CloudQueueMessage message = new CloudQueueMessage("stop");
+            stateQueue.AddMessage(message);
+            return "done";
         }
 
+        public string ClearIndex()
+        {
+            //add message
+            CloudQueueMessage message = new CloudQueueMessage("clear");
+            stateQueue.AddMessage(message);
+            return "done";
+        }
+
+
+
+        //[WebMethod]
+        //public string readQ()
+        //{
+        //    // remove message
+        //    CloudQueueMessage message2 = stateQueue.GetMessage(TimeSpan.FromMinutes(5));
+        //    stateQueue.DeleteMessage(message2);
+        //    return "" + message2.AsString;
+        //}
     }
 }

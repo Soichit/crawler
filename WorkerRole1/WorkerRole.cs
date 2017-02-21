@@ -10,6 +10,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage.Table;
 using WebRole1;
+using System.Diagnostics;
 
 
 
@@ -20,55 +21,103 @@ namespace WorkerRole1
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
 
-        //private static CloudQueue queue;
-        //private static CloudTable table;
         private static List<string> baseUrlList;
-        //private static List<String> robotXmlList;
-        //private static CloudQueue htmlQueue;
-        //private static List<String> xmlList;
-        //private static string baseUrl;
-       
+        private static CloudTable statsTable;
+        private static CloudQueue htmlQueue;
+        private static Stats stats;
+        private static List<string> lastTen;
+
+
 
         public override void Run()
         {
-            Crawl c = new Crawl(); // move inside while loop
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                 CloudConfigurationManager.GetSetting("StorageConnectionString"));
+            CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+            statsTable = tableClient.GetTableReference("stats");
+            statsTable.CreateIfNotExists();
+            htmlQueue = queueClient.GetQueueReference("myhtml");
+            htmlQueue.CreateIfNotExists();
+
+            PerformanceCounter theCPUCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            PerformanceCounter theMemCounter = new PerformanceCounter("Memory", "Available MBytes");
+
+            Crawl crawler = new Crawl();
+            stats = new Stats(theCPUCounter.NextValue(), theMemCounter.NextValue());
+
             baseUrlList = new List<string>();
             baseUrlList.Add("http://www.cnn.com/");
             // baseUrlList.Add("http://bleacherreport.com/");
-
-            
+            lastTen = new List<string>();
 
             while (true)
             {
                 Thread.Sleep(1000);
 
                 // go through list of cnn and bleacherreport
-                while (baseUrlList.Count > 0)
-                {
-                    string baseUrl = baseUrlList[0]; //"http://www.cnn.com"
-                    baseUrlList.RemoveAt(0); //move to end to be safe
-                    string robotsUrl = baseUrl + "/robots.txt";
+                //while (baseUrlList.Count > 0)
+                //{
+                //    string baseUrl = baseUrlList[0]; //"http://www.cnn.com"
+                //    baseUrlList.RemoveAt(0);
 
-                    c.parseRobot(robotsUrl);
-                    // parse through robots.txt and xmls
-                    for (int i = 0; i < c.robotXmlList.Count; i++)
-                    {
-                        c.parseXML(c.robotXmlList[i]);
-                        for (int j = 0; j < c.xmlList.Count; j++)
-                        {
-                            c.parseXML(c.xmlList[j]);
-                        }
-                    }
-                }
+                //    // parse through robots.txt and xmls
+                //    string robotsUrl = baseUrl + "/robots.txt";
+                //    crawler.parseRobot(robotsUrl);
+                //    for (int i = 0; i < crawler.robotXmlList.Count; i++)
+                //    {
+                //        stats.updatePerformance(theCPUCounter.NextValue(), theMemCounter.NextValue());
+                //        updateStats();
+                //        crawler.parseXML(crawler.robotXmlList[i]);
+                //        for (int j = 0; j < crawler.xmlList.Count; j++)
+                //        {
+                //            crawler.parseXML(crawler.xmlList[j]);
+                //        }
+                //    }
+                //}
 
                 //once all xmls are parsed, go through html queue and crawl page
-                //CloudQueueMessage message = new CloudQueueMessage("");
-                CloudQueueMessage message = c.htmlQueue.GetMessage(TimeSpan.FromMinutes(1));
-                if (message != null)
-                {
-                    c.htmlQueue.DeleteMessage(message);
-                    c.parseHTML(message.AsString);
-                }
+                //CloudQueueMessage message = crawler.htmlQueue.GetMessage(TimeSpan.FromMinutes(1));
+                //if (message != null)
+                //{
+                //    crawler.htmlQueue.DeleteMessage(message);
+                //    Boolean addedToTable = crawler.parseHTML(message.AsString);
+
+                //    updateLastTen(message.AsString);
+                //    htmlQueue.FetchAttributes();
+                //    int queueSize = (int)htmlQueue.ApproximateMessageCount;
+                //    stats.updateAllStats(theCPUCounter.NextValue(), theMemCounter.NextValue(), queueSize, addedToTable, lastTen);
+                //    updateStats();
+                //}
+                Boolean addedToTable = crawler.parseHTML("http://www.cnn.com");
+                updateLastTen("http://www.cnn.com");
+                htmlQueue.FetchAttributes();
+                int queueSize = (int)htmlQueue.ApproximateMessageCount;
+                stats.updateAllStats(theCPUCounter.NextValue(), theMemCounter.NextValue(), queueSize, addedToTable, lastTen);
+                updateStats();
+            }
+        }
+
+        public void updateLastTen(string url)
+        {
+            if (lastTen.Count >= 10)
+            {
+                lastTen.RemoveAt(lastTen.Count - 1);
+            }
+            lastTen.Insert(0, url);
+        }
+
+
+        private void updateStats()
+        {
+            try
+            {
+                TableOperation insertOperation = TableOperation.InsertOrReplace(stats);
+                statsTable.Execute(insertOperation);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceInformation("Error: " + e.Message);
             }
         }
 

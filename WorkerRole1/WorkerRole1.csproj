@@ -84,8 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Crawl.cs" />
+    <Compile Include="Errors.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Webpage.cs" />
+    <Compile Include="Stats.cs" />
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
