@@ -158,6 +158,10 @@ namespace WebRole1
                             Webpage page = new Webpage(link, title);
                             TableOperation insertOperation = TableOperation.Insert(page);
                             urlsTable.Execute(insertOperation);
+                            //testing
+                            //Errors error = new Errors(link, "test message");
+                            //TableOperation errorOperation = TableOperation.Insert(error);
+                            //errorsTable.Execute(errorOperation);
                             addedToTable = true;
                             duplicates.Add(link);
                         }
@@ -258,9 +262,6 @@ namespace WebRole1
                     }
                 }
             }
-            //string output = string.Join("\r\n", disallows.ToArray());
-            //string output2 = string.Join("\r\n", xmlList.ToArray());
-            //checkSitemap(url, reader);
         }
     }
 }

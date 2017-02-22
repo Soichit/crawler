@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Table;
+using WebRole1;
 
 namespace WebRole1
 {
@@ -12,9 +13,11 @@ namespace WebRole1
         public string url { get; set; }
         public string message { get; set; }
 
+        public Errors() {}
+
         public Errors(string url, string message)
         {
-            this.PartitionKey = url;
+            this.PartitionKey = Webpage.GetHashString(url);
             this.RowKey = Guid.NewGuid().ToString();
             this.url = url;
             this.message = message;

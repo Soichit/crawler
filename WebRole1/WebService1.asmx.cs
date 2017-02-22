@@ -78,15 +78,21 @@ namespace WebRole1
             return jss.Serialize(result);
         }
 
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string getErrors()
+        {
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+               CloudConfigurationManager.GetSetting("StorageConnectionString"));
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
 
+            CloudTable table = tableClient.GetTableReference("errors");
+            table.CreateIfNotExists();
+            var result = table.ExecuteQuery(new TableQuery<Errors>()).ToList();
 
-        //[WebMethod]
-        //public string readQ()
-        //{
-        //    // remove message
-        //    CloudQueueMessage message2 = stateQueue.GetMessage(TimeSpan.FromMinutes(5));
-        //    stateQueue.DeleteMessage(message2);
-        //    return "" + message2.AsString;
-        //}
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            return jss.Serialize(result);
+        }
+
     }
 }
