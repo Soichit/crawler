@@ -77,7 +77,7 @@ namespace WorkerRole1
                     if (status == "start")
                     {
                         //stats = new Stats(theCPUCounter.NextValue(), theMemCounter.NextValue());
-                        stats.updateState("Loading");
+                        //stats.updateState("Loading");
                         //crawler.htmlQueue.Clear();
                         //urlsTable.DeleteIfExists();
                         //urlsTable.CreateIfNotExistsAsync();
