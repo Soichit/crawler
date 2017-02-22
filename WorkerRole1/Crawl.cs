@@ -99,19 +99,17 @@ namespace WebRole1
                                 string link = reader.Value;
 
                                 //check if the date is allowed and robot.txt link is allowed
-                                if (dateAllowed && !disallows.Contains(link) && !duplicates.Contains(link))
+                                if (dateAllowed && !disallows.Contains(link))
                                 {
                                     if (link.Substring(link.Length - 4) == ".xml")
                                     {
                                         xmlList.Add(link);
-                                        duplicates.Add(link);
                                     }
                                     else
                                     {
                                         CloudQueueMessage htmlLink = new CloudQueueMessage(reader.Value);
                                         //assuming the type is .html or .htm
                                         htmlQueue.AddMessage(htmlLink);
-                                        duplicates.Add(htmlLink.AsString);
                                     }
                                 }
                             }
@@ -257,7 +255,6 @@ namespace WebRole1
                     {
                         string item = line.Substring(9);
                         robotXmlList.Add(item);
-                        duplicates.Add(item);
                     }
                 }
             }

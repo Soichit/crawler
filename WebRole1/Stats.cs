@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace WorkerRole1
+namespace WebRole1
 {
     public class Stats: TableEntity
         
@@ -21,11 +21,14 @@ namespace WorkerRole1
         public int MemCounter { get; set; }
         //errors table
 
+        public Stats() { }
+
+
         public Stats(float CPUCounter, float MemCounter) {
             this.PartitionKey = "PartionKey";
             this.RowKey = "RowKey";
             //this.RowKey = "path";
-            this.state = "idle";
+            this.state = "Idle";
             this.lastTen = "";
             this.queueSize = 0;
             this.tableSize = 0;
@@ -35,8 +38,7 @@ namespace WorkerRole1
         }
 
         public void updateAllStats(float CPUCounter, float MemCounter, int queueSize, Boolean noErrors, List<string> list)
-        {
-            this.state = "idle";     
+        {     
             this.CPUCounter = (int) CPUCounter;
             this.MemCounter = (int) MemCounter;
             this.queueSize = queueSize;
@@ -52,11 +54,6 @@ namespace WorkerRole1
         public void updateState(string state)
         {
             this.state = state;
-        } 
-
-        public void incrementTableSize()
-        {
-            tableSize++;
         }
 
         public void updateLastTen(List<string> list)

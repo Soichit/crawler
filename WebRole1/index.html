@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="StyleSheet1.css">-->
+</head>
+
+<body>
+    <div id="top">
+        <h1>Dashboard</h1>
+        <button id="start">Start</button>
+        <button id="stop">Stop</button>
+        <button id="clear">Clear</button>
+        <button id="update">Update Stats</button>
+        <p>State: <span id="state"></span></p>
+        <p>Memory: <span id="mem"></span></p>
+        <p>CPU Utilization: <span id="cpu"></span></p>
+        <p>URLs Crawled: <span id="urls"></span></p>
+        <p>Queue Size: <span id="queue"></span></p>
+        <p>Table Size: <span id="table"></span></p>
+        
+        <p>Last 10 URLs Crawled: <span id="ul-label"></span></p>
+        <ul id="ul"></ul>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            showStats();
+
+            $("#update").click(function () {
+                console.log("update clicked");
+                showStats();
+            });
+
+            $("#start").click(function () {
+                console.log("start clicked");
+                start();
+            });
+
+            $("#stop").click(function () {
+                console.log("stop clicked");
+                stop();
+            });
+        
+            function showStats() {
+                var url = "WebService1.asmx/getStats";
+                $.ajax({
+                    data: JSON.stringify(),
+                    dataType: "json",
+                    url: url,
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        var obj = JSON.parse(result.d)[0];
+                        // console.log(obj);
+                        $('#state').text(obj.state);
+                        $('#mem').text(obj.MemCounter + "MB");
+                        $('#cpu').text(obj.CPUCounter + "%");
+                        $('#urls').text(obj.URLcounter);
+                        $('#queue').text(obj.queueSize);
+                        $('#table').text(obj.tableSize);
+
+                        $("#ul").html("");
+                        var lastTen = obj.lastTen;
+                        if (lastTen == "") {
+                            $("#ul-label").html("None");
+                        } else {
+                            var lastTenSub = lastTen.substring(0, lastTen.length - 2);
+                            var lastTenArray = lastTenSub.split("; ");
+                            $("#ul-label").html("");
+                            lastTenArray.forEach(function (item) {
+                                $("#ul").append($("<li>").text(item));
+                            });
+                        }
+                    }
+                });
+            }
+
+            function start() {
+                var url = "WebService1.asmx/StartCrawling";
+                $.ajax({
+                    url: url,
+                    success: delay(function (result) {
+                        console.log("successfully started");
+                        showStats();
+                    }, 1000)
+                });
+            }
+
+            function stop() {
+                var url = "WebService1.asmx/StopCrawling";
+                $.ajax({
+                    url: url,
+                    success: delay(function (result) {
+                        console.log("successfully stopped");
+                        showStats();
+                    }, 1000)
+                });
+            }
+
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+       });
+    </script>
+</body>
+</html>
