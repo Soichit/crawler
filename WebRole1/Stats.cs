@@ -70,5 +70,10 @@ namespace WebRole1
             this.CPUCounter = (int) CPUCounter;
             this.MemCounter = (int)MemCounter;
         }
+
+        public void updateQueue(int queueSize)
+        {
+            this.queueSize = queueSize;
+        }
     }
 }

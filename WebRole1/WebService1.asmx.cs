@@ -82,16 +82,17 @@ namespace WebRole1
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
         public string getErrors()
         {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-               CloudConfigurationManager.GetSetting("StorageConnectionString"));
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+            //CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+            //   CloudConfigurationManager.GetSetting("StorageConnectionString"));
+            //CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
 
-            CloudTable table = tableClient.GetTableReference("errors");
-            table.CreateIfNotExists();
-            var result = table.ExecuteQuery(new TableQuery<Errors>()).ToList();
+            //CloudTable table = tableClient.GetTableReference("errors");
+            //table.CreateIfNotExists();
+            //var result = table.ExecuteQuery(new TableQuery<Errors>()).ToList();
 
             JavaScriptSerializer jss = new JavaScriptSerializer();
-            return jss.Serialize(result);
+            //return jss.Serialize(result);
+            return jss.Serialize("result");
         }
 
     }

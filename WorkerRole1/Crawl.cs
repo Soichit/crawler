@@ -52,13 +52,6 @@ namespace WebRole1
             baseUrl = "http://www.cnn.com"; //FIX: don't hardcode, make set baseUrl method
         }
 
-        public void startCrawl(string url)
-        {
-            //parseHTML("http://www.cnn.com/");
-            //robotXmlList.Add("http://www.cnn.com/sitemaps/sitemap-index.xml");
-        }
-
-
         public void parseXML(string url)
         {
             try

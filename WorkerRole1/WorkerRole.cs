@@ -28,9 +28,11 @@ namespace WorkerRole1
         private static CloudQueue htmlQueue;
         private static CloudQueue stateQueue;
         private static string status;
+        private static Crawl crawler;
         private static Stats stats;
         private static List<string> lastTen;
-
+        private static PerformanceCounter theCPUCounter;
+        private static PerformanceCounter theMemCounter;
 
         public override void Run()
         {
@@ -51,10 +53,10 @@ namespace WorkerRole1
             stateQueue = queueClient.GetQueueReference("state");
             stateQueue.CreateIfNotExistsAsync();
 
-            PerformanceCounter theCPUCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-            PerformanceCounter theMemCounter = new PerformanceCounter("Memory", "Available MBytes");
+            theCPUCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            theMemCounter = new PerformanceCounter("Memory", "Available MBytes");
 
-            Crawl crawler = new Crawl();
+            crawler = new Crawl();
             stats = new Stats(theCPUCounter.NextValue(), theMemCounter.NextValue());
 
             baseUrlList = new List<string>();
@@ -66,52 +68,35 @@ namespace WorkerRole1
             while (true)
             {
                 Thread.Sleep(1000);
-                CloudQueueMessage stateMessage = stateQueue.GetMessage(TimeSpan.FromMinutes(1));
-                if (stateMessage != null)
-                {
-                    stateQueue.DeleteMessage(stateMessage);
-                    status = stateMessage.AsString;
-                    // restart all data if status changes back to start
-                    if (status == "start")
-                    {
-                        stats = new Stats(theCPUCounter.NextValue(), theMemCounter.NextValue());
-                        stats.updateState("Loading");
-                        crawler.htmlQueue.Clear();
-                        urlsTable.DeleteIfExists();
-                        urlsTable.CreateIfNotExistsAsync();
-                        errorsTable.DeleteIfExists();
-                        errorsTable.CreateIfNotExistsAsync();
-                        Thread.Sleep(40000);
-                    }
-                    else //status == "stop"
-                    {
-                        stats.updateState("Idle");
-                    }
-                    updateStats();
-                }
+                checkStatus();
                 if (status == "start")
                 {
                     // go through list of cnn and bleacherreport
-                    while (baseUrlList.Count > 0)
-                    {
-                        stats.updateState("Loading");
-                        string baseUrl = baseUrlList[0]; //"http://www.cnn.com"
-                        baseUrlList.RemoveAt(0);
+                    //while (baseUrlList.Count > 0)
+                    //{
+                    //    stats.updateState("Loading");
+                    //    string baseUrl = baseUrlList[0]; //"http://www.cnn.com"
+                    //    baseUrlList.RemoveAt(0);
 
-                        // parse through robots.txt and xmls
-                        string robotsUrl = baseUrl + "/robots.txt";
-                        crawler.parseRobot(robotsUrl);
-                        for (int i = 0; i < crawler.robotXmlList.Count; i++)
-                        {
-                            stats.updatePerformance(theCPUCounter.NextValue(), theMemCounter.NextValue());
-                            updateStats();
-                            crawler.parseXML(crawler.robotXmlList[i]);
-                            for (int j = 0; j < crawler.xmlList.Count; j++)
-                            {
-                                crawler.parseXML(crawler.xmlList[j]);
-                            }
-                        }
-                    }
+                    //    // parse through robots.txt and xmls
+                    //    string robotsUrl = baseUrl + "/robots.txt";
+                    //    crawler.parseRobot(robotsUrl);
+                    //    for (int i = 0; i < crawler.robotXmlList.Count; i++)
+                    //    {
+                    //        stats.updatePerformance(theCPUCounter.NextValue(), theMemCounter.NextValue());
+                    //        updateStats();
+                    //        crawler.parseXML(crawler.robotXmlList[i]);
+                    //        for (int j = 0; j < crawler.xmlList.Count; j++)
+                    //        {
+                    //            htmlQueue.FetchAttributes();
+                    //            int queueSize = (int)htmlQueue.ApproximateMessageCount;
+                    //            stats.updateQueue(queueSize);
+                    //            checkStatus();
+                    //            updateStats();
+                    //            crawler.parseXML(crawler.xmlList[j]);
+                    //        }
+                    //    }
+                    //}
 
                     //once all xmls are parsed, go through html queue and crawl page
                     CloudQueueMessage message = crawler.htmlQueue.GetMessage(TimeSpan.FromMinutes(1));
@@ -122,13 +107,12 @@ namespace WorkerRole1
                         Boolean addedToTable = crawler.parseHTML(message.AsString);
                         updateLastTen(message.AsString);
                         htmlQueue.FetchAttributes();
-                        int queueSize = (int) htmlQueue.ApproximateMessageCount;
+                        int queueSize = (int)htmlQueue.ApproximateMessageCount;
                         stats.updateAllStats(theCPUCounter.NextValue(), theMemCounter.NextValue(), queueSize, addedToTable, lastTen);
                         updateStats();
                     }
                 }
                 
-
                 //Test duplicates
                 //Boolean addedToTable = crawler.parseHTML("http://www.cnn.com");
                 //updateLastTen("http://www.cnn.com");
@@ -139,7 +123,7 @@ namespace WorkerRole1
             }
         }
 
-        public void updateLastTen(string url)
+        private void updateLastTen(string url)
         {
             if (lastTen.Count >= 10)
             {
@@ -160,6 +144,38 @@ namespace WorkerRole1
             {
                 Trace.TraceInformation("Error: " + e.Message);
             }
+        }
+
+        private void checkStatus()
+        {
+            CloudQueueMessage stateMessage = stateQueue.GetMessage(TimeSpan.FromMinutes(1));
+            if (stateMessage != null)
+            {
+                stateQueue.DeleteMessage(stateMessage);
+                status = stateMessage.AsString;
+                // restart all data if status changes back to start
+                if (status == "start")
+                {
+                    //restartAll();
+                }
+                else //status == "stop"
+                {
+                    stats.updateState("Idle");
+                }
+                updateStats();
+            }
+        }
+
+        private void restartAll()
+        {
+            stats = new Stats(theCPUCounter.NextValue(), theMemCounter.NextValue());
+            stats.updateState("Loading");
+            crawler.htmlQueue.Clear();
+            urlsTable.DeleteIfExists();
+            urlsTable.CreateIfNotExistsAsync();
+            errorsTable.DeleteIfExists();
+            errorsTable.CreateIfNotExistsAsync();
+            Thread.Sleep(10000);
         }
 
 

@@ -93,9 +93,9 @@
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     success: function (result) {
-                        console.log(result.d);
+                        //console.log(result.d);
                         var obj = JSON.parse(result.d)[0];
-                        console.log(obj);
+                        //console.log(obj);
                         if (obj == undefined) {
                             $("#errors-label").html("None");
                         } else {
@@ -106,8 +106,8 @@
                         }
                     }, 
                 }).fail(function (e) {
-                    console.log("error");
-                    console.log(e);
+                    //console.log("error");
+                    //console.log(e);
                 })
                 ;
             }

@@ -1,19 +1,19 @@
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] At least one other instance of the launcher is running. Will wait until they all finish
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] Service running in Emulator Mode, will not wait/kill other instances of the launcher
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] Emulator config file set to C:\Users\iGuest\Documents\crawler\PA3\csx\Debug\roles\WebRole1\approot\diagnostics.wadcfgx
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] DiagnosticsStoreRootPath set to: C:\Users\iGuest\AppData\Local\dftmp\Resources\e9de9c8a-ec9c-4077-a726-6d545ae117cf
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] Loading config file: C:\Users\iGuest\Documents\crawler\PA3\csx\Debug\roles\WebRole1\approot\diagnostics.wadcfgx
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] Config file to read: C:\Users\iGuest\Documents\crawler\PA3\csx\Debug\roles\WebRole1\approot\diagnostics.wadcfgx
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] Checking VM Type
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] Emulator config file set to C:\Users\iGuest\Documents\crawler\PA3\csx\Debug\roles\WebRole1\approot\diagnostics.wadcfgx
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] Extension set to Emulator Mode
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] Reading XML configuration file
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] Bypassing private config decryption
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:17 AM] Stopping the running plugin, if any
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:19 AM] No DiagnosticsPlugin is running.
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:19 AM] Killing any DiagnosticsPlugin that might remain.
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:19 AM] Killing any MonAgentHost that might remain.
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:21 AM] Diagnostics plugin stopped successfully
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:52:21 AM] Resetting DiagnosticPlugin
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:53:35 AM] DiagnosticsPlugin launched successfully with new configuration
-DiagnosticsPluginLauncher.exe Information: 0 : [2/22/2017 6:53:35 AM] DiagnosticPlugin exited with code 0
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:39 AM] At least one other instance of the launcher is running. Will wait until they all finish
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:39 AM] Service running in Emulator Mode, will not wait/kill other instances of the launcher
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] Emulator config file set to C:\Users\iGuest\Documents\crawler\PA3\csx\Debug\roles\WebRole1\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] DiagnosticsStoreRootPath set to: C:\Users\iGuest\AppData\Local\dftmp\Resources\e6f38b33-6c55-40ea-ac5f-22bdee8f3aca
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] Loading config file: C:\Users\iGuest\Documents\crawler\PA3\csx\Debug\roles\WebRole1\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] Config file to read: C:\Users\iGuest\Documents\crawler\PA3\csx\Debug\roles\WebRole1\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] Checking VM Type
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] Emulator config file set to C:\Users\iGuest\Documents\crawler\PA3\csx\Debug\roles\WebRole1\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] Extension set to Emulator Mode
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] Reading XML configuration file
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] Bypassing private config decryption
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] Stopping the running plugin, if any
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] No DiagnosticsPlugin is running.
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:40 AM] Killing any DiagnosticsPlugin that might remain.
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:41 AM] Killing any MonAgentHost that might remain.
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:41 AM] Diagnostics plugin stopped successfully
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:36:41 AM] Resetting DiagnosticPlugin
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:37:52 AM] DiagnosticsPlugin launched successfully with new configuration
+DiagnosticsPluginLauncher.exe Information: 0 : [2/23/2017 3:37:52 AM] DiagnosticPlugin exited with code 0
