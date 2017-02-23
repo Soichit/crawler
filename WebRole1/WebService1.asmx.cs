@@ -41,21 +41,21 @@ namespace WebRole1
             crawlQueue.CreateIfNotExists();
         }
 
-        [WebMethod]
-        public string StartCrawling()
-        {
-            CloudQueueMessage message = new CloudQueueMessage("start");
-            stateQueue.AddMessage(message);
-            return "done";
-        }
+        //[WebMethod]
+        //public string StartCrawling()
+        //{
+        //    CloudQueueMessage message = new CloudQueueMessage("start");
+        //    stateQueue.AddMessage(message);
+        //    return "done";
+        //}
 
-        [WebMethod]
-        public string StopCrawling()
-        {
-            CloudQueueMessage message = new CloudQueueMessage("stop");
-            stateQueue.AddMessage(message);
-            return "done";
-        }
+        //[WebMethod]
+        //public string StopCrawling()
+        //{
+        //    CloudQueueMessage message = new CloudQueueMessage("stop");
+        //    stateQueue.AddMessage(message);
+        //    return "done";
+        //}
 
         //[WebMethod]
         //public string ClearIndex()
@@ -65,43 +65,43 @@ namespace WebRole1
         //    return "done";
         //}
 
-        [WebMethod]
-        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public string AddtoCrawler(string input)
-        {
-            input = input.ToLower();
-            if (input.Contains("cnn"))
-            {
-                if (list.Contains("http://www.cnn.com/"))
-                {
-                    return "Duplicate"; 
-                }
-                else
-                {
-                    CloudQueueMessage message = new CloudQueueMessage("http://www.cnn.com/");
-                    crawlQueue.AddMessage(message);
-                    list.Add("http://www.cnn.com/");
-                }
-            }
-            else if (input.Contains("bleacherreport"))
-            {
-                if (list.Contains("http://bleacherreport.com/"))
-                {
-                    return "Duplicate";
-                }
-                else
-                {
-                    CloudQueueMessage message = new CloudQueueMessage("http://bleacherreport.com/");
-                    crawlQueue.AddMessage(message);
-                    list.Add("http://bleacherreport.com/");
-                }
-            } else
-            {
-                return "Can't";
-            }
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            return jss.Serialize(list);
-        }
+        //[WebMethod]
+        //[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        //public string AddtoCrawler(string input)
+        //{
+        //    input = input.ToLower();
+        //    if (input.Contains("cnn"))
+        //    {
+        //        if (list.Contains("http://www.cnn.com/"))
+        //        {
+        //            return "Duplicate"; 
+        //        }
+        //        else
+        //        {
+        //            CloudQueueMessage message = new CloudQueueMessage("http://www.cnn.com/");
+        //            crawlQueue.AddMessage(message);
+        //            list.Add("http://www.cnn.com/");
+        //        }
+        //    }
+        //    else if (input.Contains("bleacherreport"))
+        //    {
+        //        if (list.Contains("http://bleacherreport.com/"))
+        //        {
+        //            return "Duplicate";
+        //        }
+        //        else
+        //        {
+        //            CloudQueueMessage message = new CloudQueueMessage("http://bleacherreport.com/");
+        //            crawlQueue.AddMessage(message);
+        //            list.Add("http://bleacherreport.com/");
+        //        }
+        //    } else
+        //    {
+        //        return "Can't";
+        //    }
+        //    JavaScriptSerializer jss = new JavaScriptSerializer();
+        //    return jss.Serialize(list);
+        //}
 
 
         [WebMethod]
