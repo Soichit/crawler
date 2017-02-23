@@ -15,14 +15,13 @@ namespace WebRole1
         public string title { get; set; }
 
 
-        //public Webpage() { }
-
+        public Webpage() { }
 
         public Webpage(string url, string title)
         {
             this.PartitionKey = GetHashString(url);
-            //this.RowKey = "path";
-            this.RowKey = Guid.NewGuid().ToString();
+            this.RowKey = "path";
+            //this.RowKey = Guid.NewGuid().ToString();
             this.url = url;
             this.title = title;
         }

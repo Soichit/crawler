@@ -10,13 +10,36 @@
 <body>
     <div id="top">
         <h1>Dashboard</h1>
-        <h3>Click Stop and Start again to restart all data</h3>
-        <h3>Hit start to crawl CNN.com and BleacherReport.com</h3>
+        <h3>Only the clear button will restart all data</h3>
+        <h3>You can only crawl CNN.com and BleacherReport.com</h3>
+        <br />
+        <br />
+
+        <h2>Crawl Website</h2>
+        <input id="crawl-input" type="text">
+        <button id="crawl-submit">Submit</button>
+        <p id="crawlMsg"></p>
+        <!--<ul id="crawl-ul"></ul>-->
+        <p>Crawled Urls: <span id="crawlTitle"></span></p>
+        <br />
+        <br />
+
+        
         <button id="start">Start</button>
         <button id="stop">Stop</button>
-        <!--<button id="clear">Clear</button>-->
+        <button id="clear">Clear</button>
         <button id="update">Update Stats</button>
-        <p>State: <span id="state"></span></p>
+        <br />
+        <br />
+        <br />
+
+        <h4>Search Title</h4>
+        <input id="input" type="text">
+        <button id="submit">Submit</button>
+        <p>Title: <span id="searchTitle"></span></p>
+        <br />
+
+        <p>State: <b><span id="state"></span></b></p>
         <p>Memory: <span id="mem"></span></p>
         <p>CPU Utilization: <span id="cpu"></span></p>
         <p>URLs Crawled: <span id="urls"></span></p>
@@ -48,6 +71,65 @@
                 console.log("stop clicked");
                 stop();
             });
+
+            $("#clear").click(function () {
+                console.log("clear clicked");
+                clear();
+            });
+
+            $("#submit").click(function () {
+                console.log("submit clicked");
+                searchTitle();
+            });
+
+            $("#crawl-submit").click(function () {
+                console.log("crawl-submit clicked");
+                crawl();
+            });
+
+            function crawl() {
+                var input = $('#crawl-input').val().trim();
+                $("#crawl-input").val("");
+                var url = "WebService1.asmx/AddtoCrawler";
+                $.ajax({
+                    data: JSON.stringify({ input: input }),
+                    dataType: "json",
+                    url: url,
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        //var obj = JSON.parse(result.d);
+                        console.log(result.d);
+                        if (result.d == "Duplicate") {
+                            $("#crawlMsg").text("Already crawled");
+                        } else if (result.d == "Can't") {
+                            $("#crawlMsg").text("You can only crawl CNN.com and BleacherReport.com");
+                        } else {
+                            $("#crawlMsg").text("");
+                            $("#crawlTitle").text(result.d);
+                        }
+                        //$("#crawl-ul").append($("<li>").text(input));
+                    }
+                })
+            }
+
+            function searchTitle() {
+                var input = $('#input').val().trim();
+                //$("#input").val("");
+                var url = "WebService1.asmx/getTitle";
+                $.ajax({
+                    data: JSON.stringify({ url: input }),
+                    dataType: "json",
+                    url: url,
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        //console.log(result);
+                        $("#searchTitle").text(result.d);
+                    }
+                })
+            }
+
         
             function showStats() {
                 var url = "WebService1.asmx/getStats";
@@ -93,21 +175,24 @@
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     success: function (result) {
-                        console.log(result.d);
-                        var obj = JSON.parse(result.d)[0];
-                        console.log(obj);
-                        if (obj == undefined) {
+                        if (result.d = "Error occured" || jQuery.isEmptyObject(result)) {
                             $("#errors-label").html("None");
-                        } else {
+                        }
+                        else
+                        {
                             $("#errors-label").html("");
-                            //lastTenArray.forEach(function (item) {
-                            //    $("#errors-label").append($("<li>").text(item));
-                            //});
+                            var obj = JSON.parse(result.d);
+                            console.log(obj);
+                            $.each(obj, function () {
+                                //console.log(this.url);
+                                //console.log(this.message);
+                                $("#errors-label").append($("<li>").text(this.message));
+                            })
                         }
                     }, 
                 }).fail(function (e) {
-                    console.log("error");
-                    console.log(e);
+                    //console.log("error");
+                    //console.log(e);
                 })
                 ;
             }
@@ -117,7 +202,6 @@
                 $.ajax({
                     url: url,
                     success: delay(function (result) {
-                        console.log("successfully started");
                         showStats();
                     }, 1000)
                 });
@@ -128,7 +212,16 @@
                 $.ajax({
                     url: url,
                     success: delay(function (result) {
-                        console.log("successfully stopped");
+                        showStats();
+                    }, 1000)
+                });
+            }
+
+            function clear() {
+                var url = "WebService1.asmx/ClearIndex";
+                $.ajax({
+                    url: url,
+                    success: delay(function (result) {
                         showStats();
                     }, 1000)
                 });

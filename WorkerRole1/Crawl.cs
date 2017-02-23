@@ -113,10 +113,7 @@ namespace WebRole1
             catch (Exception e)
             {
                 Debug.WriteLine("Error at: " + url);
-                HtmlWeb htmlWeb = new HtmlWeb();
-                Errors error = new Errors(url, htmlWeb.StatusCode.ToString());
-                TableOperation errorOperation = TableOperation.Insert(error);
-                errorsTable.Execute(errorOperation);
+                insertError(url, e.ToString());
             }
         }
 
@@ -161,10 +158,7 @@ namespace WebRole1
                         catch (Microsoft.WindowsAzure.Storage.StorageException)
                         {
                             Debug.WriteLine("StorageException error at: " + link);
-                            HtmlWeb htmlWeb = new HtmlWeb();
-                            Errors error = new Errors(link, htmlWeb.StatusCode.ToString());
-                            TableOperation errorOperation = TableOperation.Insert(error);
-                            errorsTable.Execute(errorOperation);
+                            insertError(link, "Microsoft.WindowsAzure.Storage.StorageException");
                             addedToTable = false;
                         }
                     }
@@ -197,7 +191,7 @@ namespace WebRole1
                                 }
                                 else
                                 {
-                                    correctUrl = "XXX";
+                                    //correctUrl = "XXX";
                                 }
                                 //insert into html queue
                                 if (!disallows.Contains(correctUrl) && !duplicates.Contains(link) && correctUrl.Contains("cnn.com")) // or "bleacherreport.com"
@@ -211,19 +205,13 @@ namespace WebRole1
                     catch (Exception e)
                     {
                         Debug.WriteLine("Error at: " + link);
-                        HtmlWeb htmlWeb = new HtmlWeb();
-                        Errors error = new Errors(link, htmlWeb.StatusCode.ToString());
-                        TableOperation errorOperation = TableOperation.Insert(error);
-                        errorsTable.Execute(errorOperation);
+                        insertError(link, e.ToString());
                     }
                 }
                 catch (System.NullReferenceException)
                 {
                     Debug.WriteLine("System.NullReferenceException error at: " + link);
-                    HtmlWeb htmlWeb = new HtmlWeb();
-                    Errors error = new Errors(link, htmlWeb.StatusCode.ToString());
-                    TableOperation errorOperation = TableOperation.Insert(error);
-                    errorsTable.Execute(errorOperation);
+                    insertError(link, "System.NullReferenceException");
                     addedToTable = false;
                 }
             }
@@ -255,6 +243,14 @@ namespace WebRole1
                     }
                 }
             }
+        }
+
+        private void insertError(string link, string message)
+        {
+            HtmlWeb htmlWeb = new HtmlWeb();
+            Errors error = new Errors(link, message);
+            TableOperation errorOperation = TableOperation.Insert(error);
+            errorsTable.Execute(errorOperation);
         }
     }
 }

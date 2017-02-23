@@ -26,6 +26,8 @@ namespace WebRole1
     public class WebService1 : System.Web.Services.WebService
     {
         private static CloudQueue stateQueue;
+        private static CloudQueue crawlQueue;
+        private static List<String> list = new List<string>();
         //private static CloudTable table;
 
         public WebService1()
@@ -35,6 +37,8 @@ namespace WebRole1
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
             stateQueue = queueClient.GetQueueReference("state");
             stateQueue.CreateIfNotExists();
+            crawlQueue = queueClient.GetQueueReference("crawl");
+            crawlQueue.CreateIfNotExists();
         }
 
         [WebMethod]
@@ -53,47 +57,128 @@ namespace WebRole1
             return "done";
         }
 
-        //[WebMethod]
-        //public string ClearIndex()
-        //{
-        //    CloudQueueMessage message = new CloudQueueMessage("clear");
-        //    stateQueue.AddMessage(message);
-        //    return "done";
-        //}
+        [WebMethod]
+        public string ClearIndex()
+        {
+            CloudQueueMessage message = new CloudQueueMessage("clear");
+            stateQueue.AddMessage(message);
+            return "done";
+        }
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string AddtoCrawler(string input)
+        {
+            input = input.ToLower();
+            if (input.Contains("cnn"))
+            {
+                if (list.Contains("http://www.cnn.com/"))
+                {
+                    return "Duplicate"; 
+                }
+                else
+                {
+                    CloudQueueMessage message = new CloudQueueMessage("http://www.cnn.com/");
+                    crawlQueue.AddMessage(message);
+                    list.Add("http://www.cnn.com/");
+                }
+            }
+            else if (input.Contains("bleacherreport"))
+            {
+                if (list.Contains("http://bleacherreport.com/"))
+                {
+                    return "Duplicate";
+                }
+                else
+                {
+                    CloudQueueMessage message = new CloudQueueMessage("http://bleacherreport.com/");
+                    crawlQueue.AddMessage(message);
+                    list.Add("http://bleacherreport.com/");
+                }
+            } else
+            {
+                return "Can't";
+            }
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            return jss.Serialize(list);
+        }
+
+
+        [WebMethod]
+        //[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string getTitle(string url)
+        {
+            try
+            {
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                   CloudConfigurationManager.GetSetting("StorageConnectionString"));
+                CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+
+                CloudTable table = tableClient.GetTableReference("urls");
+                table.CreateIfNotExists();
+
+                string hashed = Webpage.GetHashString(url);
+                TableOperation retrieveOperation = TableOperation.Retrieve<Webpage>(hashed, "path");
+                TableResult retrievedResult = table.Execute(retrieveOperation);
+                if (retrievedResult.Result == null)
+                {
+                    return "No results found";
+                }
+                //JavaScriptSerializer jss = new JavaScriptSerializer();
+                string result = ((Webpage)retrievedResult.Result).title;
+                return result;
+                //return jss.Serialize(result);
+            }
+            catch (Exception e)
+            {
+                return "Error occured";
+            }
+        }
 
 
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
         public string getStats()
         {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-               CloudConfigurationManager.GetSetting("StorageConnectionString"));
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+            try
+            {
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                   CloudConfigurationManager.GetSetting("StorageConnectionString"));
+                CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
 
-            CloudTable table = tableClient.GetTableReference("stats");
-            table.CreateIfNotExists();
-            var result = table.ExecuteQuery(new TableQuery<Stats>()).ToList();
+                CloudTable table = tableClient.GetTableReference("stats");
+                table.CreateIfNotExists();
+                var result = table.ExecuteQuery(new TableQuery<Stats>()).ToList();
 
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            return jss.Serialize(result);
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                return jss.Serialize(result);
+            }
+            catch (Exception e)
+            {
+                return "Error occured";
+            }
         }
 
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
         public string getErrors()
         {
-            //CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-            //   CloudConfigurationManager.GetSetting("StorageConnectionString"));
-            //CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+            try
+            {
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                   CloudConfigurationManager.GetSetting("StorageConnectionString"));
+                CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
 
-            //CloudTable table = tableClient.GetTableReference("errors");
-            //table.CreateIfNotExists();
-            //var result = table.ExecuteQuery(new TableQuery<Errors>()).ToList();
-
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            //return jss.Serialize(result);
-            return jss.Serialize("result");
+                CloudTable table = tableClient.GetTableReference("errors");
+                table.CreateIfNotExists();
+                var result = table.ExecuteQuery(new TableQuery<Errors>()).ToList();
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                return jss.Serialize(result);
+            }
+            catch (Exception e)
+            {
+                return "Error occured";
+            } 
         }
-
     }
 }
