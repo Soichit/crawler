@@ -57,13 +57,13 @@ namespace WebRole1
             return "done";
         }
 
-        [WebMethod]
-        public string ClearIndex()
-        {
-            CloudQueueMessage message = new CloudQueueMessage("clear");
-            stateQueue.AddMessage(message);
-            return "done";
-        }
+        //[WebMethod]
+        //public string ClearIndex()
+        //{
+        //    CloudQueueMessage message = new CloudQueueMessage("clear");
+        //    stateQueue.AddMessage(message);
+        //    return "done";
+        //}
 
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
